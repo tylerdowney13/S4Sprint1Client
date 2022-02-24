@@ -37,6 +37,7 @@ public class Client {
             // Create scanner
             Scanner scanner = new Scanner(System.in);
 
+            int choiceInt = 0;
             while (!exit) {
                 // Print menu
                 System.out.println("1. Search Members");
@@ -45,7 +46,7 @@ public class Client {
 
                 // Get input from user
                 System.out.print("Enter your choice: ");
-                int choiceInt = scanner.nextInt();
+                choiceInt = scanner.nextInt();
 
                 if (choiceInt == 1) {
                     System.out.println("------------------");
@@ -56,6 +57,9 @@ public class Client {
 
                     int choiceMemberInt = scanner.nextInt();
 
+                    String queryString = null;
+
+                    // CHOICE = NAME
                     if (choiceMemberInt == 1) {
                         // Get member first name
                         System.out.print("  Enter member first name: ");
@@ -66,60 +70,84 @@ public class Client {
                         String memberLastName = scanner.next();
 
                         // Querystring
-                        String queryString = memberFirstName + "%20" + memberLastName;
-
-                        // Create URI
-                        URI uri = URI.create("http://localhost:8080/api/member/name=" + queryString);
-
-                        // Get HTTP Response
-                        UncheckedObjectMapper objectMapper = new UncheckedObjectMapper();
-
-                        HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:8080/api/member/name=" + queryString))
-                                .header("Accept", "application/json")
-                                .build();
-
-                        CompletableFuture<Map<String, String>> response = HttpClient.newHttpClient()
-                                .sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                                .thenApply(HttpResponse::body)
-                                .thenApply(objectMapper::readValue);
-
-                        ArrayList<String> responseList = new ArrayList<>(response.join().values());
-
-                        System.out.println(responseList);
-
-                        // Assign values to variables
-                        String memberName = responseList.get(0);
-                        String memberAddress = responseList.get(1);
-                        String memberEmail = responseList.get(2);
-                        String memberPhone = responseList.get(3);
-                        String membershipStartDate = responseList.get(4);
-                        Object membershipDuration = responseList.get(5);
-                        String membershipType = responseList.get(6);
-                        Object membershipFamilyMembers = responseList.get(7);
-                        Object currentTournaments = responseList.get(8);
-                        Object pastTournaments = responseList.get(9);
-                        Object upcomingTournaments = responseList.get(10);
-
-                        // Print values to the screen
-                        System.out.println("Member Name:               " + memberName);
-                        System.out.println("Member Address:            " + memberAddress);
-                        System.out.println("Member Email:              " + memberEmail);
-                        System.out.println("Member Phone:              " + memberPhone);
-                        System.out.println("Membership Start:          " + membershipStartDate);
-                        System.out.println("Membership Duraction:      " + membershipDuration);
-                        System.out.println("Membership Type:           " + membershipType);
-                        System.out.println("Membership Family Members: " + membershipFamilyMembers.toString().replace("[", "").replace("]", ""));
-                        System.out.println("Current Tournaments:       " + currentTournaments.toString().replace("[", "").replace("]", ""));
-                        System.out.println("Past Tournaments:          " + pastTournaments.toString().replace("[", "").replace("]", ""));
-                        System.out.println("Upcoming Tournaments:      " + upcomingTournaments.toString().replace("[", "").replace("]", ""));
+                        queryString = "name=" + memberFirstName + "%20" + memberLastName;
                     }
+
+                    // CHOICE = EMAIL
+                    if (choiceMemberInt == 2) {
+                        // Get member email
+                        System.out.print("  Enter member email: ");
+                        String memberEmail = scanner.next();
+
+                        // Querystring
+                        queryString = "email=" + memberEmail;
+                    }
+
+                    // CHOICE = PHONE
+                    if (choiceMemberInt == 3) {
+                        // Get member email
+                        System.out.print("  Enter member phone: ");
+                        String memberPhone = scanner.next();
+
+                        // Querystring
+                        queryString = "phone=" + memberPhone;
+                    }
+
+                    // Create URI
+                    URI uri = URI.create("http://localhost:8080/api/member/" + queryString);
+
+                    // Get HTTP Response
+                    UncheckedObjectMapper objectMapper = new UncheckedObjectMapper();
+
+                    HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:8080/api/member/" + queryString))
+                            .header("Accept", "application/json")
+                            .build();
+
+                    CompletableFuture<Map<String, String>> response = HttpClient.newHttpClient()
+                            .sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                            .thenApply(HttpResponse::body)
+                            .thenApply(objectMapper::readValue);
+
+                    ArrayList<String> responseList = new ArrayList<>(response.join().values());
+
+                    System.out.println(responseList);
+
+                    // Assign values to variables
+                    String memberName = responseList.get(0);
+                    String memberAddress = responseList.get(1);
+                    String memberEmail = responseList.get(2);
+                    String memberPhone = responseList.get(3);
+                    String membershipStartDate = responseList.get(4);
+                    Object membershipDuration = responseList.get(5);
+                    String membershipType = responseList.get(6);
+                    Object membershipFamilyMembers = responseList.get(7);
+                    Object currentTournaments = responseList.get(8);
+                    Object pastTournaments = responseList.get(9);
+                    Object upcomingTournaments = responseList.get(10);
+
+                    // Print values to the screen
+                    System.out.println("Member Name:               " + memberName);
+                    System.out.println("Member Address:            " + memberAddress);
+                    System.out.println("Member Email:              " + memberEmail);
+                    System.out.println("Member Phone:              " + memberPhone);
+                    System.out.println("Membership Start:          " + membershipStartDate);
+                    System.out.println("Membership Duraction:      " + membershipDuration);
+                    System.out.println("Membership Type:           " + membershipType);
+                    System.out.println("Membership Family Members: " + membershipFamilyMembers.toString().replace("[", "").replace("]", ""));
+                    System.out.println("Current Tournaments:       " + currentTournaments.toString().replace("[", "").replace("]", ""));
+                    System.out.println("Past Tournaments:          " + pastTournaments.toString().replace("[", "").replace("]", ""));
+                    System.out.println("Upcoming Tournaments:      " + upcomingTournaments.toString().replace("[", "").replace("]", ""));
                 }
 
+
+                // TOURNAMENTS
                 if (choiceInt == 2) {
                     System.out.println("------------------");
                     System.out.println("Search Tournament by: ");
                 }
 
+
+                // EXIT
                 if (choiceInt == 3) {
                     exit = true;
                 }
