@@ -144,6 +144,79 @@ public class Client {
                 if (choiceInt == 2) {
                     System.out.println("------------------");
                     System.out.println("Search Tournament by: ");
+                    System.out.println("1. Start Date: ");
+                    System.out.println("2. End Date: ");
+                    System.out.println("3. Location: ");
+
+                    int choiceTournamentInt = scanner.nextInt();
+
+                    String queryString = null;
+
+                    // CHOICE = Start Date
+                    if (choiceTournamentInt == 1) {
+                        // Get tournament start date
+                        System.out.print("  Enter start date for tournament: ");
+                        String tournamentStartDate = scanner.next();
+
+                        // Querystring
+                        queryString = "startDate=" + tournamentStartDate;
+                    }
+                    // CHOICE = End Date
+                    if (choiceTournamentInt == 2) {
+                        // Get Tournament end date
+                        System.out.print("  Enter end date for tournament: ");
+                        String tournamentEndDate = scanner.next();
+
+                        // Querystring
+                        queryString = "endDate=" + tournamentEndDate;
+                    }
+
+                    // CHOICE = Location
+                    if (choiceTournamentInt == 3) {
+                        // Get tournament location
+                        System.out.print("  Enter tournament location: ");
+                        String tournamentLocation = scanner.next();
+
+                        // Querystring
+                        queryString = "location=" + tournamentLocation;
+                    }
+
+                    // Create URI
+                    URI uri = URI.create("http://localhost:8080/api/tournament/" + queryString);
+
+                    // Get HTTP Response
+                    UncheckedObjectMapper objectMapper = new UncheckedObjectMapper();
+
+                    HttpRequest request = HttpRequest.newBuilder(URI.create("http://localhost:8080/api/tournament/" + queryString))
+                            .header("Accept", "application/json")
+                            .build();
+
+                    CompletableFuture<Map<String, String>> response = HttpClient.newHttpClient()
+                            .sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                            .thenApply(HttpResponse::body)
+                            .thenApply(objectMapper::readValue);
+
+                    ArrayList<String> responseList = new ArrayList<>(response.join().values());
+
+                    System.out.println(responseList);
+
+                    // Assign values to variables
+                    String startDate = responseList.get(0);
+                    String endDate = responseList.get(1);
+                    String location = responseList.get(2);
+                    Object entryFee = responseList.get(3);
+                    Object cashPrizeAmount = responseList.get(4);
+                    Object participatingMembers = responseList.get(5);
+                    Object finalStandings = responseList.get(6);
+
+                    // Print values to the screen
+                    System.out.println("Start Date Of Tournament: " + startDate);
+                    System.out.println("End Date of Tournament:   " + endDate);
+                    System.out.println("Location of Tournament:   " + location);
+                    System.out.println("Entry Fee:                $" + entryFee.toString().replace("[", "").replace("]", ""));
+                    System.out.println("Prize Amount:             $" + cashPrizeAmount.toString().replace("[", "").replace("]", ""));
+                    System.out.println("Participating Members:    " + participatingMembers.toString().replace("[", "").replace("]", ""));
+                    System.out.println("Final Standings:          " + finalStandings.toString().replace("[", "").replace("]", ""));
                 }
 
 
