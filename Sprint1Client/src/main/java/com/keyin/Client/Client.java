@@ -198,8 +198,6 @@ public class Client {
 
                     ArrayList<String> responseList = new ArrayList<>(response.join().values());
 
-                    System.out.println(responseList);
-
                     // Assign values to variables
                     String startDate = responseList.get(0);
                     String endDate = responseList.get(1);
